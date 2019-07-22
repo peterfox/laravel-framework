@@ -7,9 +7,12 @@ use Illuminate\Mail\Markdown;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Support\Traits\Macroable;
 
 class MailMessage extends SimpleMessage implements Renderable
 {
+    use Macroable;
+    
     /**
      * The view to be rendered.
      *
