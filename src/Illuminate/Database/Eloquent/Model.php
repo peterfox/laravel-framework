@@ -20,6 +20,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;
+use Illuminate\Testing\AssertNoLazyLoadingOccurred;
 use JsonSerializable;
 use LogicException;
 
@@ -431,6 +432,16 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     public static function handleLazyLoadingViolationUsing(?callable $callback)
     {
         static::$lazyLoadingViolationCallback = $callback;
+    }
+
+    /**
+     * Use as an assertion in tests to find when and where lazy loading is happening.
+     *
+     * @return void
+     */
+    public static function assertNoLazyLoadingOccurs()
+    {
+        static::$lazyLoadingViolationCallback = new AssertNoLazyLoadingOccurred();
     }
 
     /**
