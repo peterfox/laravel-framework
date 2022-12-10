@@ -8,6 +8,7 @@ use Illuminate\Database\LazyLoadingViolationException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\AssertionFailedError;
 use RuntimeException;
 
 class EloquentStrictLoadingTest extends DatabaseTestCase
@@ -113,6 +114,21 @@ class EloquentStrictLoadingTest extends DatabaseTestCase
         $models = EloquentStrictLoadingTestModel1::with('modelTwos')->get();
 
         $models[0]->modelTwos[0]->modelThrees;
+    }
+
+    public function testStrictModeWithAssertion()
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessageMatches('/Illuminate\\\\Tests\\\\Integration\\\\Database\\\\EloquentStrictLoadingTestModel1 attempted to lazy load attribute modelTwos in .*\/tests\/Integration\/Database\/EloquentStrictLoadingTest\.php:131/');
+
+        Model::assertNoLazyLoadingOccurs();
+
+        EloquentStrictLoadingTestModel1::create();
+        EloquentStrictLoadingTestModel1::create();
+
+        [$model] = EloquentStrictLoadingTestModel1::get();
+
+        $model->modelTwos;
     }
 
     public function testStrictModeWithCustomCallbackOnLazyLoading()
