@@ -5,7 +5,7 @@ namespace Illuminate\Testing;
 use Illuminate\Database\Eloquent\Model;
 use PHPUnit\Framework\AssertionFailedError;
 
-class AssertNoLazyLoadingOccurred
+class ExpectNoLazyLoadingOccurred
 {
     /**
      * Assert that no lazy loading occurred.

@@ -20,7 +20,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;
-use Illuminate\Testing\AssertNoLazyLoadingOccurred;
+use Illuminate\Testing\ExpectNoLazyLoadingOccurred;
 use JsonSerializable;
 use LogicException;
 
@@ -439,9 +439,9 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      *
      * @return void
      */
-    public static function assertNoLazyLoadingOccurs()
+    public static function expectNoLazyLoading()
     {
-        static::$lazyLoadingViolationCallback = new AssertNoLazyLoadingOccurred();
+        static::$lazyLoadingViolationCallback = new ExpectNoLazyLoadingOccurred();
     }
 
     /**
