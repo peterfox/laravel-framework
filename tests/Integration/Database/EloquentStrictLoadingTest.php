@@ -119,7 +119,7 @@ class EloquentStrictLoadingTest extends DatabaseTestCase
     public function testStrictModeCanPerformExpectations()
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessageMatches('/Illuminate\\\\Tests\\\\Integration\\\\Database\\\\EloquentStrictLoadingTestModel1 attempted to lazy load attribute modelTwos in .*\/tests\/Integration\/Database\/EloquentStrictLoadingTest\.php:131/');
+        $this->expectExceptionMessageMatches('/Illuminate\\\\Tests\\\\Integration\\\\Database\\\\EloquentStrictLoadingTestModel1 attempted to lazy load attribute modelTwos in .*EloquentStrictLoadingTest\.php:131/');
 
         Model::expectNoLazyLoading();
 
