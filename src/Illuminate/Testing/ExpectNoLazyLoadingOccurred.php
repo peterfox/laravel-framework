@@ -29,7 +29,7 @@ class ExpectNoLazyLoadingOccurred
         ['file' => $file, 'line' => $line] = $caller;
         $modelName = $model::class;
 
-        throw new AssertionFailedError("{$modelName} attempted to lazy load attribute {$key} in {$file}:{$line}");
+        throw new AssertionFailedError("{$modelName}::{$key} was lazy loaded in {$file}:{$line}");
     }
 
     /**
