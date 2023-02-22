@@ -234,7 +234,7 @@ class ServeCommand extends Command
                     return;
                 }
 
-                $this->trap(SIGINT, function () {
+                $this->trap(SIGTSTP, function () {
                     $this->open("http://{$this->host()}:{$this->port()}");
                 });
 
