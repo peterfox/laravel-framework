@@ -4,6 +4,7 @@ namespace Illuminate\Foundation\Console;
 
 use Carbon\CarbonInterval;
 use Illuminate\Console\Command;
+use Illuminate\Console\Concerns\OpensUrls;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Http\Client\Factory as Http;
 use Illuminate\Support\Arr;
@@ -19,6 +20,8 @@ use Throwable;
 #[AsCommand(name: 'docs')]
 class DocsCommand extends Command
 {
+    use OpensUrls;
+
     /**
      * The name and signature of the console command.
      *
@@ -67,13 +70,6 @@ class DocsCommand extends Command
      * @var string|null
      */
     protected $version;
-
-    /**
-     * The operating system family.
-     *
-     * @var string
-     */
-    protected $systemOsFamily = PHP_OS_FAMILY;
 
     /**
      * Configure the current command.
@@ -315,84 +311,6 @@ class DocsCommand extends Command
                 Str::slug($this->argument('section'), ' ')
             ) ? 1 : 0)
             ->first();
-    }
-
-    /**
-     * Open the URL in the user's browser.
-     *
-     * @param  string  $url
-     * @return void
-     */
-    protected function open($url)
-    {
-        ($this->urlOpener ?? function ($url) {
-            if (Env::get('ARTISAN_DOCS_OPEN_STRATEGY')) {
-                $this->openViaCustomStrategy($url);
-            } elseif (in_array($this->systemOsFamily, ['Darwin', 'Windows', 'Linux'])) {
-                $this->openViaBuiltInStrategy($url);
-            } else {
-                $this->components->warn('Unable to open the URL on your system. You will need to open it yourself or create a custom opener for your system.');
-            }
-        })($url);
-    }
-
-    /**
-     * Open the URL via a custom strategy.
-     *
-     * @param  string  $url
-     * @return void
-     */
-    protected function openViaCustomStrategy($url)
-    {
-        try {
-            $command = require Env::get('ARTISAN_DOCS_OPEN_STRATEGY');
-        } catch (Throwable) {
-            $command = null;
-        }
-
-        if (! is_callable($command)) {
-            $this->components->warn('Unable to open the URL with your custom strategy. You will need to open it yourself.');
-
-            return;
-        }
-
-        $command($url);
-    }
-
-    /**
-     * Open the URL via the built in strategy.
-     *
-     * @param  string  $url
-     * @return void
-     */
-    protected function openViaBuiltInStrategy($url)
-    {
-        if ($this->systemOsFamily === 'Windows') {
-            $process = tap(Process::fromShellCommandline(escapeshellcmd("start {$url}")))->run();
-
-            if (! $process->isSuccessful()) {
-                throw new ProcessFailedException($process);
-            }
-
-            return;
-        }
-
-        $binary = Collection::make(match ($this->systemOsFamily) {
-            'Darwin' => ['open'],
-            'Linux' => ['xdg-open', 'wslview'],
-        })->first(fn ($binary) => (new ExecutableFinder)->find($binary) !== null);
-
-        if ($binary === null) {
-            $this->components->warn('Unable to open the URL on your system. You will need to open it yourself or create a custom opener for your system.');
-
-            return;
-        }
-
-        $process = tap(Process::fromShellCommandline(escapeshellcmd("{$binary} {$url}")))->run();
-
-        if (! $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
     }
 
     /**

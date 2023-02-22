@@ -3,6 +3,7 @@
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Console\Concerns\OpensUrls;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Env;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -14,6 +15,8 @@ use function Termwind\terminal;
 #[AsCommand(name: 'serve')]
 class ServeCommand extends Command
 {
+    use OpensUrls;
+
     /**
      * The console command name.
      *
@@ -231,7 +234,12 @@ class ServeCommand extends Command
                     return;
                 }
 
+                $this->trap(SIGINT, function () {
+                    $this->open("http://{$this->host()}:{$this->port()}");
+                });
+
                 $this->components->info("Server running on [http://{$this->host()}:{$this->port()}].");
+                $this->comment('  <fg=yellow;options=bold>Press Ctrl+Z to open the browser</>');
                 $this->comment('  <fg=yellow;options=bold>Press Ctrl+C to stop the server</>');
 
                 $this->newLine();
