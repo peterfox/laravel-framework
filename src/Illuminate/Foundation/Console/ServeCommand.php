@@ -90,6 +90,10 @@ class ServeCommand extends Command
 
         $process = $this->startProcess($hasEnvironment);
 
+        if ($this->option('browse')) {
+            $this->open("http://{$this->host()}:{$this->port()}");
+        }
+
         while ($process->isRunning()) {
             if ($hasEnvironment) {
                 clearstatcache(false, $environmentFile);
@@ -234,12 +238,7 @@ class ServeCommand extends Command
                     return;
                 }
 
-                $this->trap(SIGTSTP, function () {
-                    $this->open("http://{$this->host()}:{$this->port()}");
-                });
-
                 $this->components->info("Server running on [http://{$this->host()}:{$this->port()}].");
-                $this->comment('  <fg=yellow;options=bold>Press Ctrl+Z to open the browser</>');
                 $this->comment('  <fg=yellow;options=bold>Press Ctrl+C to stop the server</>');
 
                 $this->newLine();
@@ -331,6 +330,7 @@ class ServeCommand extends Command
             ['port', null, InputOption::VALUE_OPTIONAL, 'The port to serve the application on', Env::get('SERVER_PORT')],
             ['tries', null, InputOption::VALUE_OPTIONAL, 'The max number of ports to attempt to serve from', 10],
             ['no-reload', null, InputOption::VALUE_NONE, 'Do not reload the development server on .env file changes'],
+            ['browse', null, InputOption::VALUE_NONE, 'Open the server in the browser'],
         ];
     }
 }
