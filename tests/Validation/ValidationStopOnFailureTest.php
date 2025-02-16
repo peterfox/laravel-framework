@@ -18,7 +18,7 @@ class ValidationStopOnFailureTest extends TestCase
         $v = new Validator(
             $trans,
             ['foo' => 'foobar'],
-            ['foo' =>  [new StoppingValidationRule(), 'numeric']],
+            ['foo' => [new StoppingValidationRule(), 'numeric']],
         );
         $this->assertFalse($v->passes());
         $this->assertEquals(
